@@ -3,9 +3,7 @@ package com.leandro.crm.controller;
 import com.leandro.crm.model.Cliente;
 import com.leandro.crm.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +17,10 @@ public class ClienteController {
     @GetMapping
     public List<Cliente> listarTodos() {
         return clienteService.listarTodos();
+    }
+
+    @PostMapping
+    public Cliente salvar(@RequestBody Cliente cliente) {
+        return clienteService.salvar(cliente);
     }
 }
