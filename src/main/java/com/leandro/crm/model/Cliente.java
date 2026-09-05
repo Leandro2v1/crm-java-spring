@@ -1,6 +1,8 @@
 package com.leandro.crm.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "clientes")
@@ -9,8 +11,15 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     String nome;
+
+    @NotBlank
+    @Email
     String email;
+
+    @NotBlank
     String telefone;
     String empresa;
     String status;

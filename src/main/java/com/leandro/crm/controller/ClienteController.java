@@ -2,6 +2,7 @@ package com.leandro.crm.controller;
 
 import com.leandro.crm.model.Cliente;
 import com.leandro.crm.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,12 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente salvar(@RequestBody Cliente cliente) {
+    public Cliente salvar(@Valid @RequestBody Cliente cliente) {
         return clienteService.salvar(cliente);
     }
 
     @PutMapping("/{id}")
-    public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
+    public Cliente atualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
         return clienteService.atualizar(id, cliente);
     }
 
