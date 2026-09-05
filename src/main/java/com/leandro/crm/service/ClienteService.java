@@ -21,4 +21,13 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
+        clienteAtualizado.setId(id);
+        return clienteRepository.save(clienteAtualizado);
+    }
+
+    public void excluir(Long id) {
+        clienteRepository.deleteById(id);
+    }
+
 }
