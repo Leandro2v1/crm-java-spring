@@ -21,7 +21,14 @@ public class InteracaoService {
         return interacaoRepository.save(interacao);
     }
 
+    public Interacao atualizar(Long id, Interacao interacaoAtualizada) {
+        interacaoAtualizada.setId(id);
+        return interacaoRepository.save(interacaoAtualizada);
+    }
 
+    public void excluir(Long id) {
+        interacaoRepository.deleteById(id);
+    }
 
 
 }
