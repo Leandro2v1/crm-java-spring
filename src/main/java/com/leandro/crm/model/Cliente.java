@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+
 @Entity
 @Table(name = "clientes")
 public class Cliente {
@@ -71,4 +73,8 @@ public class Cliente {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Interacao> interacoes;
+
 }
