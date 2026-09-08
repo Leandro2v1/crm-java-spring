@@ -196,6 +196,32 @@
         }
     }
 
+    function editarCliente(cliente) {
+        document.getElementById('cliente-id').value = cliente.id;
+        document.getElementById('nome').value = cliente.nome;
+        document.getElementById('email').value = cliente.email;
+        document.getElementById('telefone').value = cliente.telefone;
+        document.getElementById('empresa').value = cliente.empresa || '';
+        document.getElementById('status').value = cliente.status || '';
+
+        document.getElementById('titulo-formulario').innerText = 'Editar cliente';
+        document.getElementById('btn-salvar').innerText = 'Salvar alterações';
+        document.getElementById('btn-cancelar').style.display = 'inline-block';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicao() {
+        document.getElementById('form-cliente').reset();
+        document.getElementById('cliente-id').value = '';
+
+        document.getElementById('titulo-formulario').innerText = 'Cadastrar cliente';
+        document.getElementById('btn-salvar').innerText = 'Cadastrar';
+        document.getElementById('btn-cancelar').style.display = 'none';
+    }
+
+    document.getElementById('btn-cancelar').addEventListener('click', cancelarEdicao);
+
     function carregarClientes() {
         fetch('http://localhost:8080/clientes')
             .then(resposta => resposta.json())
@@ -213,6 +239,7 @@
                             <td>${cliente.empresa || '-'}</td>
                             <td><span class="badge ${classeBadge}">${cliente.status || '-'}</span></td>
                             <td class="acoes">
+                                <button class="secondary" onclick='editarCliente(${JSON.stringify(cliente)})'>Editar</button>
                                 <button class="secondary" onclick="excluirCliente(${cliente.id})">Excluir</button>
                             </td>
                         </tr>
@@ -226,6 +253,8 @@
     document.getElementById('form-cliente').addEventListener('submit', function(evento) {
         evento.preventDefault();
 
+        const id = document.getElementById('cliente-id').value;
+
         const cliente = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value,
@@ -234,17 +263,23 @@
             status: document.getElementById('status').value
         };
 
-        fetch('http://localhost:8080/clientes', {
-            method: 'POST',
+        const url = id
+            ? `http://localhost:8080/clientes/${id}`
+            : 'http://localhost:8080/clientes';
+
+        const metodo = id ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: metodo,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cliente)
         })
             .then(resposta => resposta.json())
             .then(() => {
-                document.getElementById('form-cliente').reset();
+                cancelarEdicao();
                 carregarClientes();
             })
-            .catch(erro => console.error('Erro ao cadastrar:', erro));
+            .catch(erro => console.error('Erro ao salvar:', erro));
     });
 
     carregarClientes();
