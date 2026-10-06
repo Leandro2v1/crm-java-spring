@@ -181,6 +181,9 @@
         </table>
     </div>
 
+    <div class="card" id="painel-interacoes" style="display:none;">
+    </div>
+
 </div>
 
 <script>
@@ -241,6 +244,7 @@
                             <td class="acoes">
                                 <button class="secondary" onclick='editarCliente(${JSON.stringify(cliente)})'>Editar</button>
                                 <button class="secondary" onclick="excluirCliente(${cliente.id})">Excluir</button>
+                                <button class="secondary" onclick="verInteracoes(${cliente.id}, '${cliente.nome}')">Interações</button>
                             </td>
                         </tr>
                     `;
@@ -281,6 +285,71 @@
             })
             .catch(erro => console.error('Erro ao salvar:', erro));
     });
+
+    function verInteracoes(clienteId, nomeCliente) {
+        fetch('http://localhost:8080/interacoes')
+            .then(resposta => resposta.json())
+            .then(todasInteracoes => {
+                const doCliente = todasInteracoes.filter(i => i.cliente && i.cliente.id === clienteId);
+
+                let html = `<h2>Interações de ${nomeCliente}</h2>`;
+
+                if (doCliente.length === 0) {
+                    html += `<p>Nenhuma interação registrada.</p>`;
+                } else {
+                    html += '<table><thead><tr><th>Tipo</th><th>Descrição</th><th>Data</th></tr></thead><tbody>';
+                    doCliente.forEach(i => {
+                        html += `<tr><td>${i.tipo}</td><td>${i.descricao}</td><td>${i.data}</td></tr>`;
+                    });
+                    html += '</tbody></table>';
+                }
+
+                html += `
+                    <h2 style="margin-top:20px;">Nova interação</h2>
+                    <form id="form-interacao">
+                        <div class="form-grid">
+                            <input type="text" id="int-tipo" placeholder="Tipo (ligação, reunião, email)" required>
+                            <input type="date" id="int-data" required>
+                            <input type="text" id="int-descricao" placeholder="Descrição" style="grid-column: span 2;" required>
+                            <div class="form-actions">
+                                <button type="submit">Adicionar interação</button>
+                                <button type="button" class="secondary" onclick="fecharInteracoes()">Fechar</button>
+                            </div>
+                        </div>
+                    </form>
+                `;
+
+                document.getElementById('painel-interacoes').innerHTML = html;
+                document.getElementById('painel-interacoes').style.display = 'block';
+
+                document.getElementById('form-interacao').addEventListener('submit', function(evento) {
+                    evento.preventDefault();
+
+                    const novaInteracao = {
+                        tipo: document.getElementById('int-tipo').value,
+                        descricao: document.getElementById('int-descricao').value,
+                        data: document.getElementById('int-data').value,
+                        cliente: { id: clienteId }
+                    };
+
+                    fetch('http://localhost:8080/interacoes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(novaInteracao)
+                    })
+                        .then(resposta => resposta.json())
+                        .then(() => {
+                            verInteracoes(clienteId, nomeCliente);
+                        })
+                        .catch(erro => console.error('Erro ao adicionar interação:', erro));
+                });
+            })
+            .catch(erro => console.error('Erro ao buscar interações:', erro));
+    }
+
+    function fecharInteracoes() {
+        document.getElementById('painel-interacoes').style.display = 'none';
+    }
 
     carregarClientes();
 </script>
